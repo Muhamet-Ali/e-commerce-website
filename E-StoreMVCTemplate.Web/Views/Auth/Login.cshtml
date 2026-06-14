@@ -1,0 +1,137 @@
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model LoginDto
+<style>
+    .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .primary-gradient {
+        background: linear-gradient(135deg, #4552c8 0%, #7380f9 100%);
+    }
+</style>
+
+<div class="bg-surface-container-low min-h-screen flex items-center justify-center p-6 antialiased">
+    <div class="w-full max-w-5xl flex flex-col md:flex-row bg-surface-container-lowest rounded-xl shadow-xl overflow-hidden ring-1 ring-on-surface/5">
+
+        <!-- Left Column: Aesthetic Imagery -->
+        <div class="hidden md:block md:w-5/12 relative">
+            <div class="absolute inset-0 bg-primary/10 mix-blend-multiply z-10"></div>
+            <img alt="minimalist aesthetic" class="absolute inset-0 h-full w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDLRgaWx57InSdqwslYMvu9zxfi3XpJswrOie9KbEEVGuBMmRTZU3Poq3aCCf6jo4ydS9avtrF0E_b7agEq2RjLDNn0dEisTppE9tPLDYFgnFBXboMTdSe0TJBzarObV-6I35dA_eM0S8GG5g-1rAhCFyGegxBZgJz2UM2a3c51o248EKvm_rFn_ZWg6le78jYI-GRuBVoVSH40iQSitoPVMQKa6UyEwk1lip82s85nSWpTXfa2l4Tmbz0ZSEo-2JkRIh9IxUGnMyz" />
+            <div class="absolute inset-0 flex flex-col justify-end p-10 z-20 bg-gradient-to-t from-on-surface/60 to-transparent">
+                <h1 class="text-white text-3xl font-bold tracking-tight mb-2">ShopFlow</h1>
+                <p class="text-white/80 font-medium text-sm leading-relaxed">Welcome back. Sign in to your archive and pick up where you left off.</p>
+            </div>
+        </div>
+
+        <!-- Right Column: Login Form -->
+        <div class="w-full md:w-7/12 p-8 md:p-12 lg:p-16 flex flex-col justify-center">
+            <div class="mb-8">
+                <p class="text-on-surface-variant text-[11px] font-bold tracking-[0.2em] uppercase mb-2">Sign in to your archive</p>
+                <h2 class="text-on-surface text-2xl font-extrabold tracking-tight mb-2">Welcome back</h2>
+                <p class="text-on-surface-variant text-sm">Please enter your details to continue.</p>
+            </div>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="mb-5 flex items-start gap-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl px-4 py-3 text-sm">
+                    <span class="material-symbols-outlined text-base mt-0.5">check_circle</span>
+                    <span>@TempData["SuccessMessage"]</span>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="mb-5 flex items-start gap-3 bg-red-50 border border-red-200 text-red-800 rounded-xl px-4 py-3 text-sm">
+                    <span class="material-symbols-outlined text-base mt-0.5">error</span>
+                    <span>@TempData["ErrorMessage"]</span>
+                </div>
+            }
+
+            <form asp-controller="Auth" asp-action="Login" method="post" class="space-y-5">
+                <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+                <div asp-validation-summary="ModelOnly" class="bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm empty:hidden"></div>
+
+                <!-- Email -->
+                <div class="group">
+                    <label asp-for="Email" class="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-1.5"></label>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px] group-focus-within:text-primary transition-colors">mail</span>
+                        <input asp-for="Email"
+                               class="w-full pl-10 pr-4 py-3 bg-surface-bright border border-outline-variant rounded-lg text-on-surface placeholder:text-outline/60 outline-none focus:border-primary focus:ring-4 focus:ring-primary-container/10 transition"
+                               placeholder="name@example.com" />
+                    </div>
+                    <span asp-validation-for="Email" class="text-red-500 text-xs mt-1 block"></span>
+                </div>
+
+                <!-- Password -->
+                <div class="group">
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label asp-for="Password" class="block text-xs font-semibold uppercase tracking-wider text-on-surface-variant"></label>
+                        <a class="text-[11px] font-bold tracking-[0.05em] text-primary hover:underline uppercase" href="#">Forgot Password?</a>
+                    </div>
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px] group-focus-within:text-primary transition-colors">lock</span>
+                        <input asp-for="Password"
+                               type="password"
+                               id="password-input"
+                               class="w-full pl-10 pr-12 py-3 bg-surface-bright border border-outline-variant rounded-lg text-on-surface placeholder:text-outline/60 outline-none focus:border-primary focus:ring-4 focus:ring-primary-container/10 transition"
+                               placeholder="••••••••" />
+                        <button type="button" onclick="togglePassword('password-input', this)"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 text-outline hover:text-primary transition">
+                            <span class="material-symbols-outlined text-[20px]">visibility</span>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-red-500 text-xs mt-1 block"></span>
+                </div>
+
+                <button class="w-full primary-gradient text-on-primary font-bold py-3.5 rounded-xl shadow-lg shadow-primary-container/20 hover:shadow-primary-container/40 active:scale-[0.98] transition-all duration-300 mt-2" type="submit">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="relative my-7">
+                <div aria-hidden="true" class="absolute inset-0 flex items-center">
+                    <div class="w-full border-t border-outline/10"></div>
+                </div>
+                <div class="relative flex justify-center text-[10px] uppercase tracking-widest font-bold">
+                    <span class="bg-surface-container-lowest px-4 text-outline-variant">Or continue with</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <button class="flex items-center justify-center space-x-2 py-2.5 border border-outline/10 rounded-lg hover:bg-surface-container-low transition-colors">
+                    <img alt="Google" class="w-4 h-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKURo8odZFzjo9lcwOyUK3ouxisBRxT6TPvdkK2RKm1aF4tqt3lehdBbv3o2_aQWEM35K_478N7MnOYAxuZdLd2ybh4cccqm1azdbWVXSc5UUh-7fhy1lW1ARvtxfIPwo2_2fAu2j73PSadVHf3Dv6TN1v1JA3hCvIld3Z5QpzQbS_WpM6La_pzukWlO2l97q3QhZdX8RXVCV0PAlLowaKSL9qGkZgS5aT6OMHR9BqUYlrJf5GTuD2XTglMPgHS_vnA81tw665rzNB" />
+                    <span class="text-xs font-bold text-on-surface">Google</span>
+                </button>
+                <button class="flex items-center justify-center space-x-2 py-2.5 border border-outline/10 rounded-lg hover:bg-surface-container-low transition-colors">
+                    <span class="material-symbols-outlined text-[18px] text-on-surface">apple</span>
+                    <span class="text-xs font-bold text-on-surface">Apple ID</span>
+                </button>
+            </div>
+
+            <div class="mt-7 text-center">
+                <p class="text-on-surface-variant text-sm">
+                    Don't have an account?
+                    <a class="text-primary font-bold hover:underline ml-1" asp-controller="Auth" asp-action="Register">Register</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePassword(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const icon = btn.querySelector('.material-symbols-outlined');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.textContent = 'visibility_off';
+        } else {
+            input.type = 'password';
+            icon.textContent = 'visibility';
+        }
+    }
+</script>

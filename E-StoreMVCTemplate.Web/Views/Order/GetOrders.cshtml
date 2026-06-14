@@ -1,0 +1,117 @@
+@using E_StoreMVCTemplate.Domain.Enums
+@{
+    ViewData["Title"] = "My Orders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model List<GetUserOrdersDto>
+
+@functions {
+    string StatusLabel(OrderStatus status) => status switch
+    {
+        OrderStatus.Pending   => "Pending",
+        OrderStatus.Confirmed => "Confirmed",
+        _ => "Unknown"
+    };
+
+    string StatusBadge(OrderStatus status) => status switch
+    {
+        OrderStatus.Pending   => "bg-amber-50 text-amber-700 ring-amber-200",
+        OrderStatus.Confirmed => "bg-emerald-50 text-emerald-700 ring-emerald-200",
+        _ => "bg-slate-100 text-slate-600 ring-slate-200"
+    };
+
+    string StatusDot(OrderStatus status) => status switch
+    {
+        OrderStatus.Pending   => "bg-amber-500",
+        OrderStatus.Confirmed => "bg-emerald-500",
+        _ => "bg-slate-400"
+    };
+}
+
+<style>
+    .orders-page .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+</style>
+
+<main class="orders-page">
+    <section class="py-12 md:py-20 px-4 md:px-8 max-w-[1100px] mx-auto">
+
+        <!-- Header -->
+        <div class="mb-10 md:mb-14">
+            <p class="text-[11px] font-bold tracking-[0.25em] uppercase text-primary mb-2">Account</p>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-on-surface">My Orders</h1>
+            <p class="text-on-surface-variant mt-3 text-sm">Track all your past and active orders.</p>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <!-- Empty State -->
+            <div class="flex flex-col items-center justify-center py-24 text-center bg-surface-container-lowest rounded-3xl">
+                <div class="w-20 h-20 rounded-full bg-surface-container flex items-center justify-center mb-6">
+                    <span class="material-symbols-outlined text-4xl text-on-surface-variant">receipt_long</span>
+                </div>
+                <h2 class="text-2xl font-bold text-on-surface mb-2">No orders yet</h2>
+                <p class="text-on-surface-variant text-sm mb-8 max-w-sm">When you place your first order, it will appear here.</p>
+                <a href="/" class="px-8 py-3.5 rounded-full bg-primary text-on-primary font-semibold text-sm hover:opacity-90 active:scale-95 transition-all">
+                    Start Shopping
+                </a>
+            </div>
+        }
+        else
+        {
+            <!-- Stats -->
+            <div class="grid grid-cols-3 gap-3 md:gap-4 mb-8">
+                <div class="bg-surface-container-lowest rounded-2xl p-4 md:p-5 border border-surface-container">
+                    <p class="text-[10px] font-bold tracking-widest uppercase text-on-surface-variant">Total Orders</p>
+                    <p class="text-xl md:text-2xl font-extrabold text-on-surface mt-1">@Model.Count</p>
+                </div>
+                <div class="bg-surface-container-lowest rounded-2xl p-4 md:p-5 border border-surface-container">
+                    <p class="text-[10px] font-bold tracking-widest uppercase text-on-surface-variant">Pending</p>
+                    <p class="text-xl md:text-2xl font-extrabold text-amber-600 mt-1">
+                        @Model.Count(o => o.Status == OrderStatus.Pending)
+                    </p>
+                </div>
+                <div class="bg-surface-container-lowest rounded-2xl p-4 md:p-5 border border-surface-container">
+                    <p class="text-[10px] font-bold tracking-widest uppercase text-on-surface-variant">Total Spent</p>
+                    <p class="text-xl md:text-2xl font-extrabold text-primary mt-1">
+                        @Model.Sum(o => o.TotalAmount).ToString("N2") TL
+                    </p>
+                </div>
+            </div>
+
+            <!-- Orders List -->
+            <div class="bg-surface-container-lowest rounded-2xl border border-surface-container overflow-hidden">
+                <ul class="divide-y divide-surface-container">
+                    @foreach (var order in Model)
+                    {
+                        <li class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-5 md:px-6 py-5 hover:bg-surface-container-low/40 transition-colors">
+
+                            <!-- Left: Order Info -->
+                            <div class="flex items-center gap-4 min-w-0">
+                                <div class="w-11 h-11 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                    <span class="material-symbols-outlined text-primary text-[20px]">receipt_long</span>
+                                </div>
+                                <div class="min-w-0">
+                                    <p class="text-sm font-bold text-on-surface">Order #@order.Id</p>
+                                    <p class="text-[11px] text-on-surface-variant uppercase tracking-wider mt-0.5">Placed via Atelier</p>
+                                </div>
+                            </div>
+
+                            <!-- Right: Status + Total -->
+                            <div class="flex items-center justify-between sm:justify-end gap-4 sm:gap-6">
+                                <span class="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ring-1 ring-inset @StatusBadge(order.Status)">
+                                    <span class="w-1.5 h-1.5 rounded-full @StatusDot(order.Status)"></span>
+                                    @StatusLabel(order.Status)
+                                </span>
+                                <span class="text-base font-extrabold text-on-surface tracking-tight">
+                                    @order.TotalAmount.ToString("N2") TL
+                                </span>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </section>
+</main>

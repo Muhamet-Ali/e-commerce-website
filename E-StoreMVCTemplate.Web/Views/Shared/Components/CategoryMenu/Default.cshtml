@@ -1,0 +1,789 @@
+﻿@model List<GetCategoryListDto>
+
+<style>
+    *, *::before, *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    :root {
+        --brand-purple: #7C83FD;
+        --brand-purple-light: #EEF0FF;
+        --nav-h-desktop: 88px;
+        --nav-h-mobile: 72px;
+    }
+
+    .cart-badge {
+        position: absolute;
+        top: -4px;
+        right: -4px;
+        min-width: 18px;
+        height: 18px;
+        padding: 0 5px;
+        border-radius: 999px;
+        background: var(--brand-purple);
+        color: #fff;
+        font-size: 10px;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        box-shadow: 0 0 0 2px #fff;
+    }
+
+    .ea-icon-btn {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border-radius: 999px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #444;
+    }
+
+    .ea-icon-btn:hover {
+        background: var(--brand-purple-light);
+        color: var(--brand-purple);
+    }
+
+    .ea-ico {
+        font-size: 22px;
+        line-height: 1;
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .ea-header {
+        position: sticky;
+        top: 0;
+        width: 100%;
+        z-index: 9999;
+        background: rgba(255,255,255,0.92);
+        -webkit-backdrop-filter: blur(18px);
+        backdrop-filter: blur(18px);
+        border-bottom: 0.5px solid rgba(0,0,0,0.08);
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    .ea-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: var(--nav-h-desktop);
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 0 28px;
+        gap: 16px;
+    }
+
+    .ea-brand {
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: -0.04em;
+        color: #111;
+        text-decoration: none;
+        white-space: nowrap;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .ea-logo {
+        height: 76px;
+        width: auto;
+        display: block;
+    }
+
+    @@media (max-width: 900px) {
+        .ea-logo {
+            height: 60px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .ea-logo {
+            height: 52px;
+        }
+    }
+
+    .ea-nav {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        justify-content: center;
+        gap: 2px;
+    }
+
+    .ea-nav-item {
+        position: relative;
+    }
+
+    .ea-nav-btn {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 7px 13px;
+        font-size: 13px;
+        font-weight: 500;
+        color: #555;
+        background: none;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        white-space: nowrap;
+        font-family: inherit;
+        transition: color .18s, background .18s;
+        line-height: 1;
+    }
+
+    .ea-nav-btn-wrap {
+        display: flex;
+        align-items: center;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .ea-nav-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 7px 6px 7px 2px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: #555;
+        transition: color .18s, background .18s;
+    }
+
+        .ea-nav-toggle:hover {
+            color: #111;
+            background: rgba(0,0,0,0.05);
+        }
+
+    .ea-nav-item.open .ea-nav-toggle .ea-caret {
+        transform: rotate(180deg);
+    }
+
+    .ea-nav-btn:hover,
+    .ea-nav-item.open > .ea-nav-btn {
+        color: #111;
+        background: rgba(0,0,0,0.05);
+    }
+
+    .ea-caret {
+        width: 10px;
+        height: 10px;
+        opacity: .45;
+        transition: transform .2s;
+        flex-shrink: 0;
+    }
+
+    .ea-nav-item.open .ea-caret {
+        transform: rotate(180deg);
+    }
+
+    .ea-mega {
+        display: none;
+        position: absolute;
+        top: calc(100% + 6px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: #fff;
+        border: 0.5px solid rgba(0,0,0,0.1);
+        border-radius: 14px;
+        padding: 18px;
+        min-width: 280px;
+        z-index: 1000;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+        animation: megaIn .15s ease;
+    }
+
+    @@keyframes megaIn {
+        from {
+            opacity: 0;
+            transform: translateX(-50%) translateY(-6px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+    }
+
+    .ea-mega.right-aligned {
+        left: auto;
+        right: 0;
+        transform: none;
+        animation: megaInRight .15s ease;
+    }
+
+    @@keyframes megaInRight {
+        from {
+            opacity: 0;
+            transform: translateY(-6px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .ea-nav-item.open .ea-mega {
+        display: block;
+    }
+
+    .ea-mega-title {
+        font-size: 9.5px;
+        font-weight: 700;
+        letter-spacing: .09em;
+        text-transform: uppercase;
+        color: #aaa;
+        margin-bottom: 8px;
+        padding: 0 6px;
+    }
+
+    .ea-mega-grid {
+        display: grid;
+        gap: 4px;
+    }
+
+        .ea-mega-grid.cols-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .ea-mega-grid.cols-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+    .ea-mega-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px;
+        border-radius: 9px;
+        text-decoration: none;
+        transition: background .14s;
+    }
+
+        .ea-mega-item:hover {
+            background: rgba(0,0,0,0.045);
+        }
+
+    .ea-mega-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--brand-purple);
+        opacity: .45;
+        flex-shrink: 0;
+    }
+
+    .ea-mega-label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #111;
+        line-height: 1.3;
+    }
+
+    .ea-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .ea-btn-ghost {
+        padding: 6px 16px;
+        border-radius: 99px;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--brand-purple);
+        background: none;
+        border: 0.5px solid transparent;
+        cursor: pointer;
+        font-family: inherit;
+        transition: background .18s;
+        white-space: nowrap;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .ea-btn-ghost:hover {
+            background: var(--brand-purple-light);
+        }
+
+    .ea-btn-primary {
+        padding: 6px 18px;
+        border-radius: 99px;
+        font-size: 13px;
+        font-weight: 600;
+        background: var(--brand-purple);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-family: inherit;
+        transition: opacity .18s;
+        white-space: nowrap;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+
+        .ea-btn-primary:hover {
+            opacity: .86;
+        }
+
+    .ea-hamburger {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        width: 40px;
+        height: 40px;
+        border: 0.5px solid rgba(0,0,0,0.12);
+        border-radius: 10px;
+        background: #fff;
+        cursor: pointer;
+        flex-shrink: 0;
+        padding: 0;
+        -webkit-tap-highlight-color: transparent;
+        transition: background .15s;
+    }
+
+        .ea-hamburger:hover {
+            background: #f5f5f7;
+        }
+
+        .ea-hamburger:active {
+            background: #ebebed;
+        }
+
+    .ea-bar {
+        display: block;
+        width: 18px;
+        height: 1.5px;
+        background: #222;
+        border-radius: 2px;
+        transition: transform .24s ease, opacity .18s ease;
+        pointer-events: none;
+    }
+
+    .ea-mobile-menu {
+        display: none;
+        border-top: 0.5px solid rgba(0,0,0,0.07);
+        background: #fff;
+        max-height: calc(100vh - var(--nav-h-mobile));
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+        .ea-mobile-menu.open {
+            display: block;
+        }
+
+    .ea-mob-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 13px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #333;
+        background: none;
+        border: none;
+        border-bottom: 0.5px solid rgba(0,0,0,0.05);
+        width: 100%;
+        font-family: inherit;
+        cursor: pointer;
+        text-align: left;
+        -webkit-tap-highlight-color: transparent;
+        transition: background .12s;
+        text-decoration: none;
+    }
+
+    .ea-mob-item-wrap {
+        display: flex;
+        align-items: center;
+        border-bottom: 0.5px solid rgba(0,0,0,0.05);
+    }
+
+        .ea-mob-item-wrap .ea-mob-item {
+            border-bottom: none;
+            flex: 1;
+        }
+
+    .ea-mob-toggle {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 100%;
+        min-height: 48px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        flex-shrink: 0;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+        .ea-mob-toggle.open .ea-mob-chevron {
+            transform: rotate(90deg);
+        }
+
+    .ea-mob-item:active {
+        background: rgba(0,0,0,0.04);
+    }
+
+    .ea-mob-chevron {
+        width: 16px;
+        height: 16px;
+        opacity: .4;
+        transition: transform .2s;
+        flex-shrink: 0;
+    }
+
+    .ea-mob-sub {
+        display: none;
+        background: #fafafa;
+        padding: 6px 0;
+        border-bottom: 0.5px solid rgba(0,0,0,0.05);
+    }
+
+        .ea-mob-sub.open {
+            display: block;
+        }
+
+    .ea-mob-sub-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 32px;
+        font-size: 13px;
+        color: #555;
+        text-decoration: none;
+        -webkit-tap-highlight-color: transparent;
+        transition: background .12s;
+    }
+
+        .ea-mob-sub-link:active {
+            background: rgba(0,0,0,0.04);
+        }
+
+    .ea-mob-sub-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: #ccc;
+        flex-shrink: 0;
+    }
+
+    /* ── MOBİL ACTIONS (tek satır, ikonlar her zaman görünür) ── */
+    .ea-mob-actions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 6px;
+        padding: 12px 14px;
+        border-top: 0.5px solid rgba(0,0,0,0.07);
+    }
+
+        .ea-mob-actions .ea-btn-ghost {
+            padding: 8px 12px;
+            font-size: 13px;
+        }
+
+        .ea-mob-actions .ea-btn-primary {
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+
+        /* Yazıları sadece küçük ekranlarda gizle, ikonlar kalır */
+        .ea-mob-actions .mob-label {
+            display: inline;
+        }
+
+    @@media (max-width: 900px) {
+        .ea-nav, .ea-actions {
+            display: none;
+        }
+
+        .ea-hamburger {
+            display: flex;
+        }
+
+        .ea-inner {
+            height: var(--nav-h-mobile);
+            padding: 0 16px;
+        }
+    }
+
+    @@media (max-width: 480px) {
+        .ea-brand {
+            font-size: 15px;
+            letter-spacing: -0.03em;
+        }
+
+        .ea-inner {
+            padding: 0 14px;
+        }
+
+        .ea-mob-actions .mob-label {
+            display: none;
+        }
+
+        .ea-mob-actions .ea-btn-ghost {
+            padding: 8px 10px;
+        }
+
+        .ea-mob-actions .ea-btn-primary {
+            padding: 8px 12px;
+        }
+    }
+
+    @@media (max-width: 360px) {
+        .ea-brand {
+            font-size: 14px;
+            max-width: 160px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .ea-hamburger {
+            width: 36px;
+            height: 36px;
+        }
+    }
+</style>
+
+<header class="ea-header">
+
+    <div class="ea-inner">
+
+        <a class="ea-brand flex items-center" href="/">
+            <img src="~/images/header/Gemini_Generated_Image_6ckj5p6ckj5p6ckj-removebg-preview.png" alt="AliSoft Logo" class="ea-logo object-contain" />
+        </a>
+
+        <nav class="ea-nav">
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                var cat = Model[i];
+                bool hasSubs = cat.SubCategory != null && cat.SubCategory.Any();
+                bool rightAlign = i >= Model.Count - 2;
+
+                <div class="ea-nav-item">
+                    @if (hasSubs)
+                    {
+                        <div class="ea-nav-btn-wrap">
+                            <a class="ea-nav-btn"
+                               asp-controller="Category"
+                               asp-action="GetCategoryWithProduct"
+                               asp-route-id="@cat.Id">
+                                @cat.Name
+                            </a>
+                            <button type="button" class="ea-nav-toggle" onclick="eaToggle(this)">
+                                <svg class="ea-caret" viewBox="0 0 10 10">
+                                    <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" stroke-width="1.3" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="ea-mega @(rightAlign ? "right-aligned" : "")">
+                            <div class="ea-mega-title">@cat.Name</div>
+                            <div class="ea-mega-grid">
+                                @foreach (var sub in cat.SubCategory)
+                                {
+                                    <a class="ea-mega-item"
+                                       asp-controller="SubCategory"
+                                       asp-action="GetSubCategoryWithProduct"
+                                       asp-route-id="@sub.Id">
+                                        <span class="ea-mega-dot"></span>
+                                        <span class="ea-mega-label">@sub.Name</span>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <a class="ea-nav-btn"
+                           asp-controller="Category"
+                           asp-action="GetCategoryWithProduct"
+                           asp-route-id="@cat.Id">
+                            @cat.Name
+                        </a>
+                    }
+                </div>
+            }
+        </nav>
+
+        <div class="ea-actions">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a class="ea-btn-ghost ea-icon-btn" asp-controller="Cart" asp-action="ViewCart" title="Cart">
+                    <span class="material-symbols-outlined ea-ico">shopping_cart</span>
+                    @if ((int)ViewBag.CartCount > 0)
+                    {
+                        <span class="cart-badge">@ViewBag.CartCount</span>
+                    }
+                </a>
+                <a class="ea-btn-ghost ea-icon-btn" asp-controller="Favorite" asp-action="Index" title="Favorites">
+                    <span class="material-symbols-outlined ea-ico">favorite</span>
+                </a>
+                <a class="ea-btn-ghost ea-icon-btn" asp-controller="Order" asp-action="GetOrders" title="Orders">
+                    <span class="material-symbols-outlined ea-ico">receipt_long</span>
+                </a>
+                <a class="ea-btn-ghost ea-icon-btn" asp-controller="Auth" asp-action="GetProfile" title="Profile">
+                    <span class="material-symbols-outlined ea-ico">account_circle</span>
+                </a>
+                <a class="ea-btn-primary" asp-controller="Auth" asp-action="Logout">
+                    <span class="material-symbols-outlined ea-ico" style="margin-right:6px;">logout</span>
+                    Logout
+                </a>
+            }
+            else
+            {
+                <a class="ea-btn-ghost" asp-controller="Auth" asp-action="Login">Login</a>
+                <a class="ea-btn-primary" asp-controller="Auth" asp-action="Register">Register</a>
+            }
+        </div>
+
+        <button class="ea-hamburger" id="ea-ham" aria-label="Menüyü aç/kapat" aria-expanded="false">
+            <span class="ea-bar" id="ea-b1"></span>
+            <span class="ea-bar" id="ea-b2"></span>
+            <span class="ea-bar" id="ea-b3"></span>
+        </button>
+    </div>
+
+    <div class="ea-mobile-menu" id="ea-mob-menu">
+
+        @foreach (var cat in Model)
+        {
+            bool hasSubs = cat.SubCategory != null && cat.SubCategory.Any();
+
+            if (hasSubs)
+            {
+                <div>
+                    <div class="ea-mob-item-wrap">
+                        <a class="ea-mob-item"
+                           asp-controller="Category"
+                           asp-action="GetCategoryWithProduct"
+                           asp-route-id="@cat.Id">
+                            @cat.Name
+                        </a>
+                        <button type="button"
+                                class="ea-mob-toggle"
+                                onclick="eaMobToggle(this, 'mob-sub-@cat.Id')">
+                            <svg class="ea-mob-chevron" viewBox="0 0 16 16">
+                                <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="1.5" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="ea-mob-sub" id="mob-sub-@cat.Id">
+                        @foreach (var sub in cat.SubCategory)
+                        {
+                            <a class="ea-mob-sub-link"
+                               asp-controller="SubCategory"
+                               asp-action="GetSubCategoryWithProduct"
+                               asp-route-id="@sub.Id">
+                                <span class="ea-mob-sub-dot"></span>
+                                @sub.Name
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <a class="ea-mob-item"
+                   asp-controller="Category"
+                   asp-action="GetCategoryWithProduct"
+                   asp-route-id="@cat.Id">
+                    @cat.Name
+                </a>
+            }
+        }
+
+        <!-- MOBİL ALT EYLEMLER -->
+        <div class="ea-mob-actions">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a class="ea-btn-ghost ea-icon-btn" asp-controller="Cart" asp-action="ViewCart" title="Cart">
+                    <span class="material-symbols-outlined ea-ico">shopping_cart</span>
+                    @if ((int)ViewBag.CartCount > 0)
+                    {
+                        <span class="cart-badge">@ViewBag.CartCount</span>
+                    }
+                </a>
+                <a class="ea-btn-ghost ea-icon-btn" asp-controller="Favorite" asp-action="Index" title="Favorites">
+                    <span class="material-symbols-outlined ea-ico">favorite</span>
+                </a>
+                <a class="ea-btn-ghost ea-icon-btn" asp-controller="Order" asp-action="GetOrders" title="Orders">
+                    <span class="material-symbols-outlined ea-ico">receipt_long</span>
+                </a>
+                <a class="ea-btn-ghost ea-icon-btn" asp-controller="Auth" asp-action="GetProfile" title="Profile">
+                    <span class="material-symbols-outlined ea-ico">account_circle</span>
+                </a>
+                <a class="ea-btn-primary" asp-controller="Auth" asp-action="Logout">
+                    <span class="material-symbols-outlined ea-ico" style="margin-right:6px;">logout</span>
+                    <span class="mob-label">Logout</span>
+                </a>
+            }
+            else
+            {
+                <a class="ea-btn-ghost" asp-controller="Auth" asp-action="Login">Login</a>
+                <a class="ea-btn-primary" asp-controller="Auth" asp-action="Register">Register</a>
+            }
+        </div>
+
+    </div>
+
+</header>
+
+<script>
+    function eaToggle(btn) {
+        var item = btn.closest('.ea-nav-item');
+        var isOpen = item.classList.contains('open');
+        document.querySelectorAll('.ea-nav-item.open').forEach(function(el) { el.classList.remove('open'); });
+        if (!isOpen) item.classList.add('open');
+    }
+
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.ea-nav-item')) {
+            document.querySelectorAll('.ea-nav-item.open').forEach(function(el) { el.classList.remove('open'); });
+        }
+    });
+
+    var ham     = document.getElementById('ea-ham');
+    var mobMenu = document.getElementById('ea-mob-menu');
+    var b1      = document.getElementById('ea-b1');
+    var b2      = document.getElementById('ea-b2');
+    var b3      = document.getElementById('ea-b3');
+    var mobOpen = false;
+
+    ham.addEventListener('click', function() {
+        mobOpen = !mobOpen;
+        mobMenu.classList.toggle('open', mobOpen);
+        ham.setAttribute('aria-expanded', String(mobOpen));
+        b1.style.transform = mobOpen ? 'translateY(6.5px) rotate(45deg)' : '';
+        b2.style.opacity   = mobOpen ? '0' : '1';
+        b3.style.transform = mobOpen ? 'translateY(-6.5px) rotate(-45deg)' : '';
+    });
+
+    function eaMobToggle(btn, subId) {
+        var sub    = document.getElementById(subId);
+        var isOpen = sub.classList.contains('open');
+        document.querySelectorAll('.ea-mob-sub.open').forEach(function(el) { el.classList.remove('open'); });
+        document.querySelectorAll('.ea-mob-toggle.open').forEach(function(el) { el.classList.remove('open'); });
+        if (!isOpen) { sub.classList.add('open'); btn.classList.add('open'); }
+    }
+</script>

@@ -1,0 +1,104 @@
+
+@{
+    ViewData["Title"] = "Reviews";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@model List<GetReviewsDto>
+
+
+<div class="container-fluid px-4">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
+        <h1>Reviews</h1>
+    </div>
+
+    <!-- Table -->
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>User</th>
+                        <th>Rating</th>
+                        <th>Comment</th>
+                        <th>Status</th>
+                        <th>CreatedAt</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @item.ProductName
+                                </td>
+                                <td>
+                                    @item.UserName
+                                </td>
+                                <td>
+                                    @item.Rating / 5
+                                </td>
+                                <td>
+                                    @item.Comment
+                                </td>
+                                <td>
+                                    @if (item.IsApproved)
+                                    {
+                                        <span class="badge bg-success">Approved</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-warning text-dark">Pending</span>
+                                    }
+                                </td>
+                                <td>
+                                    @item.CreatedAt.ToShortDateString()
+                                </td>
+
+                                <td class="text-end">
+
+                                    <a asp-area="Admin"
+                                       asp-controller="Review"
+                                       asp-action="Update"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-warning">
+                                        Update
+                                    </a>
+
+                                    <a asp-area="Admin"
+                                       asp-controller="Review"
+                                       asp-action="Delete"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Are you sure you want to delete it?')">
+                                        Delete
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">
+                                No Reviews found
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>

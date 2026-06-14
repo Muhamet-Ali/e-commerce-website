@@ -1,0 +1,277 @@
+@model List<GetHeadeImagesListDto>
+
+<section class="relative w-full h-[870px] overflow-hidden bg-surface-container-low">
+    <style>
+        .hero-root {
+            position: relative;
+            width: 100%;
+            height: 850px;
+            overflow: hidden;
+            background: #1a1a1a;
+            font-family: var(--font-sans);
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+            .slide.active {
+                opacity: 1;
+            }
+
+            .slide img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block;
+            }
+
+        .slide-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.55) 55%, rgba(0,0,0,0.35) 100%),
+                        linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.4) 100%);
+        }
+
+        .hero-title-wrap {
+            position: absolute;
+            left: 56px;
+            top: 80px;
+            right: 56px;
+            max-width: 720px;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .hero-eyebrow {
+            display: inline-block;
+            font-size: 11px;
+            letter-spacing: 0.3em;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.85);
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 6px 14px;
+            border-radius: 999px;
+            margin-bottom: 18px;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .hero-title {
+            font-family: 'Manrope', sans-serif;
+            font-size: clamp(36px, 5vw, 64px);
+            font-weight: 800;
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            color: #fff;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.4);
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .hero-line {
+            margin-top: 22px;
+            width: 0;
+            height: 2px;
+            background: rgba(255,255,255,0.7);
+            opacity: 0;
+        }
+
+        .slide.active .hero-eyebrow {
+            animation: heroSlideUp 0.7s 0.15s ease-out forwards;
+        }
+
+        .slide.active .hero-title {
+            animation: heroSlideUp 0.9s 0.3s ease-out forwards;
+        }
+
+        .slide.active .hero-line {
+            animation: heroLineGrow 0.8s 0.6s ease-out forwards;
+        }
+
+        @@keyframes heroSlideUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes heroLineGrow {
+            to {
+                opacity: 1;
+                width: 80px;
+            }
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+            .nav-btn:hover {
+                background: rgba(255,255,255,0.25);
+            }
+
+        .nav-prev {
+            left: 16px;
+        }
+
+        .nav-next {
+            right: 16px;
+        }
+
+        .dots {
+            position: absolute;
+            bottom: 24px;
+            left: 56px;
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 99px;
+            background: rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+            .dot.active {
+                background: #fff;
+                width: 24px;
+            }
+
+        .progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 2px;
+            background: rgba(255,255,255,0.8);
+            transition: width 0.05s linear;
+            z-index: 10;
+        }
+
+        @@media (max-width: 768px) {
+            .hero-title-wrap {
+                left: 24px;
+                right: 24px;
+                top: 60px;
+            }
+
+            .dots {
+                left: 24px;
+            }
+        }
+    </style>
+
+    <div class="hero-root" id="hero">
+
+        @{
+            int idx = 0;
+        }
+        @foreach (var image in Model.Where(x => x.IsActive))
+        {
+            <div class="slide @(idx == 0 ? "active" : "")" id="slide-@idx">
+                <img src="~/images/header/@image.ImageUrl" alt="Slide @(idx + 1)" />
+                <div class="slide-overlay"></div>
+                @if (!string.IsNullOrWhiteSpace(image.Title))
+                {
+                    <div class="hero-title-wrap">
+                        <span class="hero-eyebrow">The Editorial Atelier</span>
+                        <h2 class="hero-title">@image.Title</h2>
+                        <div class="hero-line"></div>
+                    </div>
+                }
+            </div>
+            idx++;
+        }
+
+        <button class="nav-btn nav-prev" id="prev">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+        </button>
+        <button class="nav-btn nav-next" id="next">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+        </button>
+
+        <div class="dots" id="dots">
+            @for (int i = 0; i < idx; i++)
+            {
+                <button class="dot @(i == 0 ? "active" : "")" data-i="@i"></button>
+            }
+        </div>
+
+        <div class="progress" id="progress"></div>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.dot');
+        const progressBar = document.getElementById('progress');
+        let current = 0;
+        let timer = null;
+        let progressTimer = null;
+        let startTime = null;
+        const DURATION = 5000;
+
+        function restartAnimations(slideEl) {
+            const targets = slideEl.querySelectorAll('.hero-eyebrow, .hero-title, .hero-line');
+            targets.forEach(el => {
+                el.style.animation = 'none';
+                void el.offsetWidth;
+                el.style.animation = '';
+            });
+        }
+
+        function goTo(n) {
+            slides[current].classList.remove('active');
+            dots[current].classList.remove('active');
+            current = (n + slides.length) % slides.length;
+            slides[current].classList.add('active');
+            dots[current].classList.add('active');
+            restartAnimations(slides[current]);
+            resetProgress();
+        }
+
+        function resetProgress() {
+            clearInterval(progressTimer);
+            clearTimeout(timer);
+            progressBar.style.width = '0%';
+            startTime = Date.now();
+            progressTimer = setInterval(() => {
+                const elapsed = Date.now() - startTime;
+                const pct = Math.min((elapsed / DURATION) * 100, 100);
+                progressBar.style.width = pct + '%';
+            }, 30);
+            timer = setTimeout(() => goTo(current + 1), DURATION);
+        }
+
+        document.getElementById('prev').addEventListener('click', () => goTo(current - 1));
+        document.getElementById('next').addEventListener('click', () => goTo(current + 1));
+        dots.forEach(d => d.addEventListener('click', () => goTo(+d.dataset.i)));
+
+        resetProgress();
+    </script>
+</section>

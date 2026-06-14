@@ -1,0 +1,158 @@
+@model E_StoreMVCTemplate.Application.DTOs.Dashboard.AdminDashboardDto
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid px-4">
+    <h1 class="mt-4">Dashboard</h1>
+
+    <div class="row">
+        <div class="col-xl-2 col-md-4">
+            <div class="card bg-primary text-white mb-4">
+                <div class="card-body">
+                    <div class="small">Products</div>
+                    <div class="fs-4">@Model.ProductCount</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4">
+            <div class="card bg-success text-white mb-4">
+                <div class="card-body">
+                    <div class="small">Active Products</div>
+                    <div class="fs-4">@Model.ActiveProductCount</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4">
+            <div class="card bg-warning text-white mb-4">
+                <div class="card-body">
+                    <div class="small">Pending Orders</div>
+                    <div class="fs-4">@Model.PendingOrderCount</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4">
+            <div class="card bg-info text-white mb-4">
+                <div class="card-body">
+                    <div class="small">Users</div>
+                    <div class="fs-4">@Model.UserCount</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4">
+            <div class="card bg-dark text-white mb-4">
+                <div class="card-body">
+                    <div class="small">Revenue</div>
+                    <div class="fs-4">@Model.TotalRevenue.ToString("C")</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-md-4">
+            <div class="card bg-secondary text-white mb-4">
+                <div class="card-body">
+                    <div class="small">Reviews</div>
+                    <div class="fs-4">@Model.ReviewCount</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-4">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-chart-pie me-1"></i>
+                    Order Status
+                </div>
+                <div class="card-body">
+                    <canvas id="orderStatusChart" width="100%" height="70"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-8">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <i class="fas fa-receipt me-1"></i>
+                    Recent Orders
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>User</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.RecentOrders)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.UserName</td>
+                                    <td>@item.TotalAmount.ToString("C")</td>
+                                    <td>@item.Status</td>
+                                    <td>@item.CreatedAt.ToString("dd.MM.yyyy")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card mb-4">
+        <div class="card-header">
+            <i class="fas fa-box me-1"></i>
+            Low Stock Products
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>Stock</th>
+                        <th>Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.LowStockProducts)
+                    {
+                        <tr>
+                            <td>@item.Id</td>
+                            <td>@item.Name</td>
+                            <td>@item.Stock</td>
+                            <td>@item.Price.ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    setTimeout(function () {
+        var chartElement = document.getElementById('orderStatusChart');
+
+        if (!chartElement || !window.Chart) {
+            return;
+        }
+
+        new Chart(chartElement, {
+            type: 'doughnut',
+            data: {
+                labels: ['Pending', 'Confirmed'],
+                datasets: [{
+                    data: [@Model.PendingOrderCount, @Model.ConfirmedOrderCount],
+                    backgroundColor: ['#ffc107', '#198754']
+                }]
+            }
+        });
+    }, 300);
+</script>

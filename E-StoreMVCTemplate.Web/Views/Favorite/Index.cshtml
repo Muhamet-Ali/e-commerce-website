@@ -1,0 +1,96 @@
+@{
+    ViewData["Title"] = "Favorites";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model List<GetUserFavoriteListDto>
+
+<style>
+    .fav-page .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+</style>
+
+<main class="fav-page">
+    <section class="py-12 md:py-20 px-4 md:px-8 max-w-[1440px] mx-auto">
+
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between mb-10 md:mb-14 gap-4">
+            <div>
+                <p class="text-[11px] font-bold tracking-[0.25em] uppercase text-primary mb-2">Wishlist</p>
+                <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-on-surface">
+                    Your Favorites
+                </h1>
+                <div class="h-[3px] w-16 bg-primary mt-4 rounded-full"></div>
+            </div>
+            <p class="text-on-surface-variant max-w-xs text-sm leading-relaxed">
+                @(Model?.Count ?? 0) saved item@((Model?.Count ?? 0) != 1 ? "s" : "") — your hand-picked collection.
+            </p>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <!-- Empty State -->
+            <div class="flex flex-col items-center justify-center py-24 text-center bg-surface-container-lowest rounded-3xl">
+                <div class="w-20 h-20 rounded-full bg-surface-container flex items-center justify-center mb-6">
+                    <span class="material-symbols-outlined text-4xl text-on-surface-variant">favorite</span>
+                </div>
+                <h2 class="text-2xl font-bold text-on-surface mb-2">No favorites yet</h2>
+                <p class="text-on-surface-variant text-sm mb-8 max-w-sm">Tap the heart on any product to save it here for later.</p>
+                <a href="/" class="px-8 py-3.5 rounded-full bg-primary text-on-primary font-semibold text-sm hover:opacity-90 active:scale-95 transition-all">
+                    Browse Products
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                @foreach (var product in Model)
+                {
+                    var imageUrl = !string.IsNullOrEmpty(product.ProductImageUrl)
+                    ? $"/images/products/{product.ProductImageUrl}"
+                    : "/images/placeholder.jpg";
+
+                    <div class="group relative flex flex-col bg-surface-container-lowest rounded-2xl overflow-hidden border border-surface-container hover:border-outline-variant/40 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_40px_-12px_rgba(0,0,0,0.08)]">
+
+                        <!-- Image -->
+                        <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.ProductId"
+                           class="relative aspect-[4/5] overflow-hidden bg-surface-container-low block">
+                            <img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                 src="@imageUrl"
+                                 alt="@product.ProductName"
+                                 loading="lazy" />
+
+                            <!-- Remove Button -->
+                            <a asp-controller="Favorite" asp-action="RemoveFavorite" asp-route-productId="@product.ProductId"
+                               onclick="event.stopPropagation();"
+                               class="absolute top-3 right-3 w-9 h-9 flex items-center justify-center rounded-full bg-white/95 backdrop-blur shadow-md text-error hover:bg-error hover:text-on-error transition-all"
+                               title="Remove from favorites">
+                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings:'FILL' 1">favorite</span>
+                            </a>
+                        </a>
+
+                        <!-- Info -->
+                        <div class="p-4 md:p-5 space-y-3 flex-grow flex flex-col">
+                            <div class="space-y-1 flex-grow">
+                                <h3 class="text-sm md:text-base font-semibold text-on-surface line-clamp-2 leading-snug min-h-[2.5rem]">
+                                    @product.ProductName
+                                </h3>
+                                <p class="text-base md:text-lg font-extrabold text-primary tracking-tight">
+                                    @product.ProductPrice.ToString("N2") TL
+                                </p>
+                                <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">
+                                    Added @product.CreatedAt.ToString("MMM dd, yyyy")
+                                </p>
+                            </div>
+
+                            <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.ProductId"
+                               class="block w-full py-2.5 rounded-full border border-outline-variant/40 text-xs font-bold uppercase tracking-wider text-center transition-all hover:bg-on-surface hover:text-surface hover:border-on-surface active:scale-95">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </section>
+</main>

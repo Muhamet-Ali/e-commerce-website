@@ -1,0 +1,102 @@
+@model List<GetSubCateogryListDto>
+
+@{
+    ViewData["Title"] = "SubCategories";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+<div class="container-fluid px-4">
+
+    <!-- Header + Button -->
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
+        <div>
+            <h1>SubCategories</h1>
+            <span class="badge bg-secondary">Total SubCategories: @(Model?.Count ?? 0)</span>
+        </div>
+
+        <a asp-area="Admin"
+           asp-controller="SubCategory"
+           asp-action="Create"
+           class="btn btn-primary">
+            + Create SubCategory
+        </a>
+    </div>
+
+    <!-- Table -->
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>ProductCount</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @item.Name
+                                </td>
+                                <td>
+                                    @item.CateogryName
+                                </td>
+                                <td>
+                                    @item.ProductCount
+                                </td>
+
+                                <td class="text-end">
+
+                                    <a asp-area="Admin"
+                                       asp-controller="SubCategory"
+                                       asp-action="Detail"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-info">
+                                        Detail
+                                    </a>
+
+                                    <a asp-area="Admin"
+                                       asp-controller="SubCategory"
+                                       asp-action="Update"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-warning">
+                                        Update
+                                    </a>
+
+                                    <a asp-area="Admin"
+                                       asp-controller="SubCategory"
+                                       asp-action="Delete"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Are you sure you want to delete it?')">
+                                        Delete
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">
+                                No SubCategories found
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,188 @@
+@{
+    ViewData["Title"] = "Cart";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@model List<CartByIdDto>
+
+@{
+    decimal subtotal = Model?.Sum(ci => ci.UnitPrice * ci.Quantity) ?? 0;
+    int itemCount = Model?.Sum(ci => ci.Quantity) ?? 0;
+}
+
+<style>
+    .cart-page .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+    }
+</style>
+
+<div class="cart-page bg-background text-on-background min-h-screen">
+    <div class="max-w-[1280px] mx-auto px-4 md:px-8 py-12 md:py-16">
+
+        <!-- Header -->
+        <div class="mb-10 md:mb-14">
+            <p class="text-[11px] font-bold tracking-[0.25em] uppercase text-primary mb-3">Your Bag</p>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-on-surface">Shopping Cart</h1>
+            <p class="text-on-surface-variant mt-3 text-sm">
+                @if (Model == null || !Model.Any())
+                {
+                    <span>Your cart is currently empty.</span>
+                }
+                else
+                {
+                    <span>@itemCount item@(itemCount != 1 ? "s" : "") ready for checkout.</span>
+                }
+            </p>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <!-- Empty State -->
+            <div class="flex flex-col items-center justify-center py-24 text-center bg-surface-container-lowest rounded-3xl">
+                <div class="w-20 h-20 rounded-full bg-surface-container flex items-center justify-center mb-6">
+                    <span class="material-symbols-outlined text-4xl text-on-surface-variant">shopping_bag</span>
+                </div>
+                <h2 class="text-2xl font-bold text-on-surface mb-2">Your cart is empty</h2>
+                <p class="text-on-surface-variant text-sm mb-8 max-w-sm">Browse our collection and add the pieces you love.</p>
+                <a href="/" class="px-8 py-3.5 rounded-full bg-primary text-on-primary font-semibold text-sm hover:opacity-90 active:scale-95 transition-all">
+                    Continue Shopping
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+
+                <!-- Left: Items -->
+                <section class="lg:col-span-8 space-y-4">
+                    @foreach (var item in Model)
+                    {
+                        <div class="flex flex-col sm:flex-row gap-5 p-4 sm:p-5 bg-surface-container-lowest rounded-2xl border border-surface-container hover:border-outline-variant/40 transition-colors"
+                             data-cart-item-id="@item.CartItemId">
+
+                            <!-- Image -->
+                            <div class="w-full sm:w-28 h-28 sm:h-28 flex-shrink-0 bg-surface-container-low rounded-xl overflow-hidden">
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img alt="@item.ProductName"
+                                         class="w-full h-full object-cover"
+                                         src="~/images/products/@item.ImageUrl" />
+                                }
+                                else
+                                {
+                                    <div class="w-full h-full flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-3xl text-on-surface-variant">image_not_supported</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Info + Controls -->
+                            <div class="flex-grow flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+
+                                <div class="min-w-0">
+                                    <a asp-controller="Product" asp-action="Detail" asp-route-id="@item.ProductId"
+                                       class="block">
+                                        <h3 class="text-base font-semibold text-on-surface truncate hover:text-primary transition-colors">@item.ProductName</h3>
+                                    </a>
+                                    <p class="text-xs text-on-surface-variant mt-1">Unit price: <span class="font-medium text-on-surface">@item.UnitPrice.ToString("N2") TL</span></p>
+                                    <p class="text-sm font-bold text-primary mt-2">@item.SubTotal.ToString("N2") TL</p>
+                                </div>
+
+                                <div class="flex items-center justify-between sm:justify-end gap-4 sm:gap-6">
+                                    <!-- Quantity -->
+                                    <div class="flex items-center bg-surface-container-low rounded-full px-1 py-1">
+                                        <a asp-controller="Cart" asp-action="MinusQuantity"
+                                           asp-route-cartId="@item.cartId" asp-route-ProductId="@item.ProductId"
+                                           class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+                                            <span class="material-symbols-outlined text-[18px]">remove</span>
+                                        </a>
+                                        <span class="w-8 text-center font-semibold text-on-surface text-sm">@item.Quantity</span>
+                                        <a asp-controller="Cart" asp-action="PlusQuantity"
+                                           asp-route-cartId="@item.cartId" asp-route-ProductId="@item.ProductId"
+                                           class="w-8 h-8 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors">
+                                            <span class="material-symbols-outlined text-[18px]">add</span>
+                                        </a>
+                                    </div>
+
+                                    <!-- Remove -->
+                                    <a asp-controller="Cart" asp-action="RemoveItem"
+                                       asp-route-cartId="@item.cartId" asp-route-ProductId="@item.ProductId"
+                                       class="w-9 h-9 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-error/10 hover:text-error transition-colors"
+                                       title="Remove">
+                                        <span class="material-symbols-outlined text-[20px]">delete</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Clear Cart -->
+                    <div class="pt-4 flex justify-end">
+                        <a asp-controller="Cart" asp-action="ClearCart"
+                           class="inline-flex items-center gap-2 text-xs font-semibold text-on-surface-variant hover:text-error transition-colors">
+                            <span class="material-symbols-outlined text-[16px]">delete_sweep</span>
+                            Clear all items
+                        </a>
+                    </div>
+                </section>
+
+                <!-- Right: Summary -->
+                <aside class="lg:col-span-4 lg:sticky lg:top-24">
+                    <div class="bg-surface-container-lowest rounded-2xl border border-surface-container p-6 md:p-7 space-y-6">
+                        <h2 class="text-lg font-extrabold tracking-tight text-on-surface">Order Summary</h2>
+
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between text-on-surface-variant">
+                                <span>Items (@itemCount)</span>
+                                <span class="text-on-surface font-medium">@subtotal.ToString("N2") TL</span>
+                            </div>
+                            <div class="flex justify-between text-on-surface-variant">
+                                <span>Shipping</span>
+                                <span class="text-primary font-semibold uppercase tracking-wider text-xs">Free</span>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-surface-container flex justify-between items-end">
+                            <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-on-surface-variant">Total</span>
+                            <p class="text-2xl font-extrabold text-on-surface tracking-tight">@subtotal.ToString("N2") TL</p>
+                        </div>
+
+                        <!-- Checkout -->
+                        <form asp-controller="Payment" asp-action="Checkout" method="post" class="space-y-4">
+                            <div class="space-y-2">
+                                <label for="Address" class="block text-[11px] font-bold tracking-wider uppercase text-on-surface-variant">
+                                    Delivery Address
+                                </label>
+                                <textarea id="Address"
+                                          name="Address"
+                                          rows="3"
+                                          required
+                                          placeholder="Street, city, postal code…"
+                                          class="w-full rounded-xl border border-outline-variant/40 bg-surface px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant/60 outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20 resize-none"></textarea>
+                            </div>
+
+                            <button type="submit"
+                                    class="w-full py-3.5 rounded-full bg-primary text-on-primary font-bold text-sm tracking-tight hover:opacity-90 active:scale-[0.98] transition-all flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-[18px]">lock</span>
+                                Pay Securely
+                            </button>
+
+                            <p class="text-[10px] text-center text-on-surface-variant/70 leading-relaxed">
+                                By placing this order you agree to the Terms of Service & Privacy Policy.
+                            </p>
+                        </form>
+
+                        <!-- Guarantee -->
+                        <div class="pt-4 border-t border-surface-container flex items-start gap-3">
+                            <span class="material-symbols-outlined text-primary text-[20px] mt-0.5">verified</span>
+                            <div>
+                                <p class="text-xs font-bold text-on-surface">The Atelier Guarantee</p>
+                                <p class="text-[11px] text-on-surface-variant leading-relaxed mt-1">Authenticity verified. Free returns within 30 days.</p>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        }
+    </div>
+</div>

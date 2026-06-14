@@ -1,0 +1,39 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>E_StoreMVCTemplate.Web</RootNamespace>
+    <UserSecretsId>dce1ca72-32e2-4cca-aa45-077f304af94e</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="DTOs\RegisterDto.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.23" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\E-StoreMVCTemplate.Application\E-StoreMVCTemplate.Application.csproj" />
+    <ProjectReference Include="..\E-StoreMVCTemplate.Infrastructure\E-StoreMVCTemplate.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="wwwroot\images\discounts\" />
+    <Folder Include="wwwroot\images\products\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="DTOs\RegisterDto.cs" />
+  </ItemGroup>
+
+</Project>

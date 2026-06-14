@@ -1,0 +1,30 @@
+@model PaymentFormDto
+
+@{
+    ViewData["Title"] = "Payment";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="min-h-screen bg-background text-on-background">
+    <div class="max-w-[960px] mx-auto px-4 md:px-8 py-12 md:py-16">
+        <div class="mb-8">
+            <p class="text-[11px] font-bold tracking-[0.25em] uppercase text-primary mb-3">Secure Payment</p>
+            <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight text-on-surface">Complete Payment</h1>
+            <p class="text-on-surface-variant mt-3 text-sm">Your payment is processed securely by iyzico sandbox.</p>
+        </div>
+
+        <div class="bg-surface-container-lowest rounded-2xl border border-surface-container p-5 md:p-7">
+            @Html.Raw(Model.CheckoutFormContent)
+
+            @if (!string.IsNullOrEmpty(Model.PaymentPageUrl))
+            {
+                <div class="pt-6">
+                    <a href="@Model.PaymentPageUrl"
+                       class="inline-flex items-center justify-center px-6 py-3 rounded-full bg-primary text-on-primary font-bold text-sm hover:opacity-90 transition-all">
+                        Open Payment Page
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,35 @@
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+@model CreateCategoryDto
+
+
+
+<div class="container-fluid px-4 mt-4">
+
+    <h2>Create Category</h2>
+
+    <form asp-area="Admin"
+          asp-controller="Category"
+          asp-action="Create"
+          method="post">
+
+        <div class="card p-4">
+
+            <div class="mb-3">
+                <label>Name</label>
+                <input asp-for="Name" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label>Display Order</label>
+                <input asp-for="DisplayOrder" type="number" class="form-control" required />
+            </div>
+
+            <button type="submit" class="btn btn-success">Create</button>
+
+        </div>
+    </form>
+</div>

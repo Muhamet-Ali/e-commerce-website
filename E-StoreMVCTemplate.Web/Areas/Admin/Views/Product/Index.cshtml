@@ -1,0 +1,112 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@model List<GetProductListDto>
+
+
+<div class="container-fluid px-4">
+
+    <!-- Header + Button -->
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-4">
+        <h1>Products</h1>
+
+        <a asp-area="Admin"
+           asp-controller="Product"
+           asp-action="Create"
+           class="btn btn-primary">
+            + Create Product
+        </a>
+    </div>
+
+    <!-- Table -->
+    <div class="card mb-4">
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Price</th>
+                        <th>DiscountPrice</th>
+                        <th>Stock</th>
+                        <th>DiscountName</th>
+                        <th>CategoryName</th>
+                        <th>FavoriteCount</th>
+                        <th>Image</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @item.Name
+                                </td>
+                                <td>
+                                    @item.Price
+                                </td>
+                                <td>
+                                    @item.DiscountPrice
+                                </td>
+                                <td>
+                                    @item.Stock
+                                </td>
+                                <td>
+                                    @item.DiscountName
+                                </td>
+                                <td>
+                                    @item.CategoryName
+                                </td>
+                                <td>
+                                    @item.FavoriteCount
+                                </td>
+                                <td>
+                                    <img src="~/images/products/@item.Images.FirstOrDefault()?.ImageUrl" width="80" />
+                                </td>
+
+                                <td class="text-end">
+
+                                    <a asp-area="Admin"
+                                       asp-controller="Product"
+                                       asp-action="Update"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-warning">
+                                        Update
+                                    </a>
+
+                                    <a asp-area="Admin"
+                                       asp-controller="Product"
+                                       asp-action="Delete"
+                                       asp-route-id="@item.Id"
+                                       class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Are you sure you want to delete it?')">
+                                        Delete
+                                    </a>
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">
+                                No Products found
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+
+            </table>
+
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build *)",
+      "Read(//c/Users/aliaa/source/repos/E-StoreMVCTemplate/E-StoreMVCTemplate.Application/DTOs/**)",
+      "Read(//c/Users/aliaa/source/repos/E-StoreMVCTemplate/E-StoreMVCTemplate.Application/DTOs/Category/**)",
+      "Read(//c/Users/aliaa/source/repos/E-StoreMVCTemplate/E-StoreMVCTemplate.Application/Interfaces/**)",
+      "Read(//c/Users/aliaa/source/repos/E-StoreMVCTemplate/E-StoreMVCTemplate.Infrastructure/Services/**)"
+    ]
+  }
+}

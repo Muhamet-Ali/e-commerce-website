@@ -1,0 +1,519 @@
+﻿@{
+    ViewData["Title"] = "Detail";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model GetProductByIdDto
+
+<style>
+    .thumb-scroll::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+
+    .thumb-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .thumb-scroll::-webkit-scrollbar-thumb {
+        background: rgba(0,0,0,0.15);
+        border-radius: 999px;
+    }
+
+    .thumb-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0,0,0,0.15) transparent;
+    }
+
+    #zoom-container #main-image {
+        will-change: transform;
+    }
+</style>
+
+<main>
+    <section class="py-16 md:py-20 px-4 md:px-8 max-w-[1440px] mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 xl:gap-16">
+
+                <!-- IMAGE GALLERY (Left 7 Columns) -->
+                <div class="lg:col-span-7 flex flex-col-reverse md:flex-row gap-3 md:gap-4">
+                    <!-- Vertical Thumbnails -->
+                    <div class="thumb-scroll flex md:flex-col gap-3 overflow-x-auto md:overflow-x-hidden md:overflow-y-auto md:max-h-[640px] md:pr-1 md:w-24 flex-shrink-0"
+                         id="thumbnail-list">
+                        @foreach (var (img, index) in Model.Images.OrderBy(i => i.DisplayOrder).Select((img, i) => (img, i)))
+                        {
+                            <div onclick="switchImage(event, '@Url.Content("~/images/products/" + img.ImageUrl)')"
+                                 class="thumb-item group relative flex-shrink-0 w-20 h-20 md:w-24 md:h-24 rounded-xl overflow-hidden cursor-pointer transition-all duration-200 bg-surface-container-low border
+                                                        @(index == 0 ? "border-primary ring-2 ring-primary ring-offset-2 ring-offset-surface" : "border-surface-container-high hover:border-outline")">
+                                <img class="w-full h-full object-cover transition duration-300 group-hover:scale-105"
+                                     src="@Url.Content("~/images/products/" + img.ImageUrl)"
+                                     alt="@Model.Name image @(index + 1)" />
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Main Image -->
+                    <div class="flex-grow min-w-0">
+                        <div id="zoom-container"
+                             class="relative w-full aspect-square md:aspect-[4/5] rounded-2xl md:rounded-[2rem] overflow-hidden bg-surface-container-low shadow-xl shadow-on-surface/5">
+                            <img id="main-image"
+                                 class="w-full h-full object-cover transition-transform duration-200 ease-out cursor-zoom-in select-none"
+                                 src="@Url.Content("~/images/products/" + Model.Images.OrderBy(i => i.DisplayOrder).First().ImageUrl)"
+                                 alt="@Model.Name"
+                                 draggable="false" />
+
+                            <!-- Zoom Lens (cursor) -->
+                            <div id="zoom-lens"
+                                 class="pointer-events-none absolute hidden border-2 border-white/80 rounded-full shadow-lg backdrop-blur-[1px] bg-white/10"
+                                 style="width:140px; height:140px;"></div>
+
+                            @if (Model.DiscountPrice.HasValue && Model.DiscountPrice < Model.Price)
+                            {
+                                var discountPct = (int)Math.Round((1 - Model.DiscountPrice.Value / Model.Price) * 100);
+                                <div class="absolute top-5 left-5 z-10 pointer-events-none">
+                                    <span class="bg-error text-on-error text-[10px] font-bold uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full shadow-sm">
+                                        @discountPct% OFF
+                                    </span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="absolute top-5 left-5 z-10 pointer-events-none">
+                                    <span class="bg-surface-container-lowest/80 backdrop-blur-md text-primary text-[10px] font-bold uppercase tracking-[0.2em] px-3.5 py-1.5 rounded-full shadow-sm">
+                                        New Arrival
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PRODUCT INFO (Right 5 Columns) -->
+                <div class="lg:col-span-5 flex flex-col justify-center">
+                    <div class="space-y-8">
+                        <!-- Title & Identity -->
+                        <div class="space-y-2">
+                            <p class="text-primary font-bold tracking-[0.3em] uppercase text-xs">
+                                @(Model.SubCategoryName ?? Model.CategoryName)
+                            </p>
+                            <h1 class="text-5xl md:text-6xl font-headline font-extrabold tracking-tighter text-on-surface leading-tight">
+                                @Model.Name
+                            </h1>
+                            <div class="flex items-center gap-4 pt-4">
+                                @if (Model.DiscountPrice.HasValue && Model.DiscountPrice < Model.Price)
+                                {
+                                    var discountPct = (int)Math.Round((1 - Model.DiscountPrice.Value / Model.Price) * 100);
+                                    <span class="text-3xl font-headline font-bold text-on-surface">$@Model.DiscountPrice.Value.ToString("0.00")</span>
+                                    <span class="text-xl font-headline font-medium text-outline line-through">$@Model.Price.ToString("0.00")</span>
+                                    <span class="bg-primary/10 text-primary text-xs font-bold px-3 py-1 rounded-lg">@discountPct% OFF</span>
+                                }
+                                else
+                                {
+                                    <span class="text-3xl font-headline font-bold text-on-surface">$@Model.Price.ToString("0.00")</span>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="space-y-4">
+                            <p class="text-on-surface-variant leading-relaxed text-lg max-w-md">
+                                @Model.Description
+                            </p>
+                            <div class="flex items-center gap-2 text-success">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span class="text-sm font-medium text-on-surface-variant uppercase tracking-widest">In Stock — Ready to ship</span>
+                            </div>
+                        </div>
+
+                        <!-- Actions -->
+                        @{
+                            var detailReturnUrl = Url.Action("Detail", "Product", new { id = Model.Id });
+                        }
+                        <div class="space-y-4 pt-6">
+                            @if (User.Identity?.IsAuthenticated == true)
+                            {
+                                <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                    <input type="hidden" name="ProductId" value="@Model.Id" />
+                                    <input type="hidden" id="qty-input" name="Quantity" value="1" />
+
+                                    <div class="flex gap-4">
+                                        <div class="flex items-center bg-surface-container-low rounded-full px-2 py-1">
+                                            <button type="button" onclick="changeQty(-1)">-</button>
+                                            <span id="qty-display" class="w-10 text-center font-bold">1</span>
+                                            <button type="button" onclick="changeQty(1)">+</button>
+                                        </div>
+
+                                        <button type="submit"
+                                                class="flex-grow bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold py-4 px-8 rounded-full shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3">
+                                            <span class="material-symbols-outlined" data-weight="fill">shopping_bag</span>
+                                            <span>Add to Cart</span>
+                                        </button>
+                                    </div>
+                                </form>
+
+                                @if (Model.IsFavorite)
+                                {
+                                    <a asp-controller="Favorite"
+                                       asp-action="RemoveFavorite"
+                                       asp-route-productId="@Model.Id"
+                                       class="group w-full py-3.5 text-sm font-bold text-rose-600 bg-rose-50 border border-rose-200 flex items-center justify-center gap-2.5 rounded-full shadow-sm hover:bg-rose-100 hover:border-rose-300 hover:-translate-y-0.5 active:scale-95 transition-all duration-300">
+                                        <span class="material-symbols-outlined text-lg" data-weight="fill" style="font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;">favorite</span>
+                                        <span>Saved to Wishlist</span>
+                                        <span class="ml-1 text-[10px] uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">Remove</span>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a asp-controller="Favorite"
+                                       asp-action="AddFavorite"
+                                       asp-route-productId="@Model.Id"
+                                       class="group w-full py-3.5 text-sm font-bold text-on-surface bg-surface-container-lowest border border-surface-container-high flex items-center justify-center gap-2.5 rounded-full shadow-sm hover:border-rose-300 hover:text-rose-600 hover:bg-rose-50/50 hover:-translate-y-0.5 active:scale-95 transition-all duration-300">
+                                        <span class="material-symbols-outlined text-lg group-hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;">favorite</span>
+                                        <span>Add to Wishlist</span>
+                                    </a>
+                                }
+                            }
+                            else
+                            {
+                                <div class="flex gap-4">
+                                    <div class="flex items-center bg-surface-container-low rounded-full px-2 py-1 opacity-60">
+                                        <button type="button" disabled>-</button>
+                                        <span class="w-10 text-center font-bold">1</span>
+                                        <button type="button" disabled>+</button>
+                                    </div>
+
+                                    <a asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@detailReturnUrl"
+                                       class="flex-grow bg-gradient-to-r from-primary to-primary-container text-on-primary font-bold py-4 px-8 rounded-full shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3">
+                                        <span class="material-symbols-outlined" data-weight="fill">login</span>
+                                        <span>Login to Buy</span>
+                                    </a>
+                                </div>
+
+                                <a asp-controller="Auth" asp-action="Login" asp-route-returnUrl="@detailReturnUrl"
+                                   class="w-full py-4 text-sm font-bold text-on-surface flex items-center justify-center gap-2 hover:bg-surface-container-high rounded-full transition-colors">
+                                    <span class="material-symbols-outlined text-lg">favorite</span>
+                                    Login to add to Wishlist
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Details -->
+            <div class="mt-16 pt-10 border-t border-surface-container">
+                @{
+                    var avgRating = Model.Reviews?.Any() == true ? Model.Reviews.Average(r => r.Rating) : 0;
+                    var reviewCount = Model.Reviews?.Count ?? 0;
+                }
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
+                    <div class="bg-surface-container-lowest rounded-2xl p-5 flex items-center gap-3 border border-surface-container">
+                        <span class="material-symbols-outlined text-primary text-2xl bg-primary/10 rounded-xl p-2">inventory_2</span>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-widest text-on-surface-variant">Stock</p>
+                            <p class="font-headline font-bold text-on-surface">@Model.Stock units</p>
+                        </div>
+                    </div>
+                    <div class="bg-surface-container-lowest rounded-2xl p-5 flex items-center gap-3 border border-surface-container">
+                        <span class="material-symbols-outlined text-primary text-2xl bg-primary/10 rounded-xl p-2">sell</span>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-widest text-on-surface-variant">Category</p>
+                            <p class="font-headline font-bold text-on-surface truncate">@Model.CategoryName</p>
+                        </div>
+                    </div>
+                    <div class="bg-surface-container-lowest rounded-2xl p-5 flex items-center gap-3 border border-surface-container">
+                        <span class="material-symbols-outlined text-primary text-2xl bg-primary/10 rounded-xl p-2">favorite</span>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-widest text-on-surface-variant">Wishlisted</p>
+                            <p class="font-headline font-bold text-on-surface">@Model.FavoriteCount times</p>
+                        </div>
+                    </div>
+                    <div class="bg-surface-container-lowest rounded-2xl p-5 flex items-center gap-3 border border-surface-container">
+                        <span class="material-symbols-outlined text-primary text-2xl bg-primary/10 rounded-xl p-2">star</span>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-widest text-on-surface-variant">Rating</p>
+                            <p class="font-headline font-bold text-on-surface">
+                                @if (reviewCount > 0)
+                                {
+                                    <text>@avgRating.ToString("0.0") <span class="text-xs font-normal text-on-surface-variant">/ 5</span></text>
+                                }
+                                else
+                                {
+                                    <span class="text-xs font-normal text-on-surface-variant">No reviews</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2">
+                        <h2 class="text-2xl font-headline font-bold tracking-tight mb-3">About this product</h2>
+                        <p class="text-on-surface-variant leading-relaxed">
+                            @Model.Description
+                        </p>
+                    </div>
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-xs uppercase tracking-[0.2em] text-primary">Categories</h4>
+                        <ul class="space-y-2 text-on-surface-variant text-sm">
+                            <li class="flex items-center gap-2">
+                                <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                @Model.CategoryName
+                            </li>
+                            @if (!string.IsNullOrEmpty(Model.SubCategoryName))
+                            {
+                                <li class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+                                    @Model.SubCategoryName
+                                </li>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.DiscountName))
+                            {
+                                <li class="flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-primary text-sm">local_offer</span>
+                                    Campaign: @Model.DiscountName
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="mt-16 pt-10 border-t border-surface-container">
+                <div class="flex items-center justify-between flex-wrap gap-4 mb-8">
+                    <div>
+                        <h2 class="text-2xl font-headline font-bold">Customer Reviews</h2>
+                        @if (Model.Reviews?.Any() == true)
+                        {
+                            <div class="flex items-center gap-2 mt-1">
+                                <div class="flex items-center">
+                                    @for (int s = 1; s <= 5; s++)
+                                    {
+                                        <span class="material-symbols-outlined text-base @(s <= Math.Round(Model.Reviews.Average(r => r.Rating)) ? "text-primary" : "text-outline-variant")" data-weight="fill">star</span>
+                                    }
+                                </div>
+                                <span class="text-sm text-on-surface-variant">
+                                    <strong class="text-on-surface">@Model.Reviews.Average(r => r.Rating).ToString("0.0")</strong> · @Model.Reviews.Count review(s)
+                                </span>
+                            </div>
+                        }
+                    </div>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <button type="button" onclick="document.getElementById('review-form').classList.toggle('hidden')"
+                                class="bg-primary text-on-primary font-bold py-2.5 px-5 rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:scale-95 transition-all duration-300 flex items-center gap-2 text-sm">
+                            <span class="material-symbols-outlined text-base">rate_review</span>
+                            Write a Review
+                        </button>
+                    }
+                    else
+                    {
+                        <a asp-controller="Auth" asp-action="Login"
+                           class="bg-surface-container-high text-on-surface font-bold py-2.5 px-5 rounded-full hover:bg-surface-container-highest transition-all duration-300 flex items-center gap-2 text-sm">
+                            <span class="material-symbols-outlined text-base">login</span>
+                            Login to Review
+                        </a>
+                    }
+                </div>
+
+                <!-- Review Form -->
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                <div id="review-form" class="hidden mb-8 bg-surface-container-lowest border border-surface-container rounded-2xl p-6">
+                    <form asp-controller="Review" asp-action="Create" method="post" class="space-y-4">
+                        <input type="hidden" name="ProductId" value="@Model.Id" />
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest font-bold text-on-surface-variant mb-2">Your Rating</label>
+                            <div class="flex items-center gap-1" id="rating-stars">
+                                @for (int s = 1; s <= 5; s++)
+                                {
+                                    <button type="button" data-value="@s" onclick="setRating(@s)"
+                                            class="rating-star material-symbols-outlined text-3xl text-outline-variant hover:text-primary transition">star</button>
+                                }
+                                <input type="hidden" name="Rating" id="rating-input" value="0" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase tracking-widest font-bold text-on-surface-variant mb-2">Your Review</label>
+                            <textarea name="Comment" rows="3" required
+                                      placeholder="Share your experience with this product..."
+                                      class="w-full bg-surface rounded-xl border border-surface-container px-4 py-3 text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-primary"></textarea>
+                        </div>
+                        <div class="flex justify-end gap-3">
+                            <button type="button" onclick="document.getElementById('review-form').classList.add('hidden')"
+                                    class="text-sm font-bold text-on-surface-variant px-5 py-2.5 rounded-full hover:bg-surface-container-high transition">
+                                Cancel
+                            </button>
+                            <button type="submit"
+                                    class="bg-primary text-on-primary font-bold py-2.5 px-6 rounded-full shadow-lg shadow-primary/20 hover:shadow-primary/40 active:scale-95 transition-all duration-300 text-sm">
+                                Submit Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                }
+
+                @if (Model.Reviews?.Any() == true)
+                {
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        @foreach (var review in Model.Reviews.OrderByDescending(r => r.CreatedAt))
+                        {
+                            var initial = !string.IsNullOrEmpty(review.UserName) ? review.UserName.Trim().Substring(0, 1).ToUpper() : "?";
+                            <div class="bg-surface-container-lowest border border-surface-container rounded-2xl p-5 space-y-3 hover:border-primary/30 transition">
+                                <div class="flex items-start justify-between gap-3">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <div class="w-10 h-10 rounded-full bg-primary/10 text-primary font-bold flex items-center justify-center flex-shrink-0">
+                                            @initial
+                                        </div>
+                                        <div class="min-w-0">
+                                            <p class="font-bold text-on-surface text-sm truncate">@(review.UserName ?? "Anonymous")</p>
+                                            <p class="text-[11px] text-on-surface-variant">@review.CreatedAt.ToString("MMM d, yyyy")</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center flex-shrink-0">
+                                        @for (int s = 1; s <= 5; s++)
+                                        {
+                                            <span class="material-symbols-outlined text-sm @(s <= review.Rating ? "text-primary" : "text-outline-variant")" data-weight="fill">star</span>
+                                        }
+                                    </div>
+                                </div>
+                                <p class="text-on-surface-variant text-sm leading-relaxed">@review.Comment</p>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <div class="bg-surface-container-lowest border border-dashed border-surface-container rounded-2xl p-10 text-center">
+                        <span class="material-symbols-outlined text-4xl text-outline-variant">reviews</span>
+                        <p class="mt-2 text-on-surface-variant text-sm">No reviews yet. Be the first to share your experience.</p>
+                    </div>
+                }
+            </div>
+
+            @await Component.InvokeAsync("RelatedProducts", new { id = Model.Id })
+
+        </section>
+</main>
+
+
+
+<script>
+
+     let qty = 1;
+
+     function setRating(value) {
+         document.getElementById('rating-input').value = value;
+         document.querySelectorAll('#rating-stars .rating-star').forEach(el => {
+             const v = parseInt(el.dataset.value);
+             if (v <= value) {
+                 el.classList.remove('text-outline-variant');
+                 el.classList.add('text-primary');
+             } else {
+                 el.classList.add('text-outline-variant');
+                 el.classList.remove('text-primary');
+             }
+         });
+     }
+
+     function changeQty(amount) {
+         qty += amount;
+
+         if (qty < 1) qty = 1;
+
+         document.getElementById("qty-display").innerText = qty;
+         document.getElementById("qty-input").value = qty;
+     }
+
+
+    function switchImage(ev, url) {
+        const img = document.getElementById('main-image');
+        img.src = url;
+        img.style.transform = '';
+        img.style.transformOrigin = 'center center';
+
+        document.querySelectorAll('#thumbnail-list > .thumb-item').forEach(el => {
+            el.classList.remove('border-primary', 'ring-2', 'ring-primary', 'ring-offset-2', 'ring-offset-surface');
+            el.classList.add('border-surface-container-high');
+        });
+        ev.currentTarget.classList.remove('border-surface-container-high');
+        ev.currentTarget.classList.add('border-primary', 'ring-2', 'ring-primary', 'ring-offset-2', 'ring-offset-surface');
+    }
+
+    // ── HOVER ZOOM LENS ──
+    (function () {
+        const container = document.getElementById('zoom-container');
+        const img       = document.getElementById('main-image');
+        const lens      = document.getElementById('zoom-lens');
+        if (!container || !img || !lens) return;
+
+        const ZOOM = 2.2;
+
+        function onEnter() {
+            if (window.matchMedia('(hover: none)').matches) return;
+            lens.classList.remove('hidden');
+            img.style.transform = 'scale(' + ZOOM + ')';
+        }
+        function onLeave() {
+            lens.classList.add('hidden');
+            img.style.transform = '';
+            img.style.transformOrigin = 'center center';
+        }
+        function onMove(e) {
+            if (window.matchMedia('(hover: none)').matches) return;
+            const rect = container.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (x < 0 || y < 0 || x > rect.width || y > rect.height) {
+                onLeave();
+                return;
+            }
+
+            const px = (x / rect.width)  * 100;
+            const py = (y / rect.height) * 100;
+            img.style.transformOrigin = px + '% ' + py + '%';
+
+            const lw = lens.offsetWidth  / 2;
+            const lh = lens.offsetHeight / 2;
+            lens.style.left = (x - lw) + 'px';
+            lens.style.top  = (y - lh) + 'px';
+        }
+
+        container.addEventListener('mouseenter', onEnter);
+        container.addEventListener('mouseleave', onLeave);
+        container.addEventListener('mousemove',  onMove);
+    })();
+
+    function addToCart(productId) {
+        fetch('/Cart/Add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId: productId, quantity: qty })
+        }).then(r => {
+            if (r.ok) {
+                // kendi toast/notification sisteminle değiştir
+                alert('Sepete eklendi!');
+            }
+        });
+    }
+
+    function addToWishlist(productId) {
+        fetch('/Wishlist/Add', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ productId: productId })
+        }).then(r => {
+            if (r.ok) {
+                alert('Favorilere eklendi!');
+            }
+        });
+    }
+</script>
+
+
+
+
+
+
+

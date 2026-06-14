@@ -1,0 +1,44 @@
+
+@{
+    ViewData["Title"] = "Update";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+@model UpdateSubCategoryDto
+
+
+
+<div class="container-fluid px-4 mt-4">
+
+    <h2>Update SubCategory</h2>
+
+    <form asp-area="Admin"
+          asp-controller="SubCategory"
+          asp-action="Update"
+          method="post">
+
+        <div class="card p-4">
+
+            <input asp-for="Id" type="hidden" />
+
+            <div class="mb-3">
+                <label>Name</label>
+                <input asp-for="Name" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label>Category</label>
+                <select asp-for="CategoryId" class="form-control" required>
+                    <option value="">Select Category</option>
+
+                    @foreach (var c in ViewBag.Categories)
+                    {
+                        <option value="@c.Id">@c.Name</option>
+                    }
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-warning">Update</button>
+
+        </div>
+    </form>
+</div>

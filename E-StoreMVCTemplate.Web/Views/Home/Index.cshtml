@@ -1,0 +1,142 @@
+﻿@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model List<GetPopulerProductList>
+
+<main>
+    <!-- Hero Section -->
+    @await Component.InvokeAsync("HeaderImages")
+    <br />
+    <br />
+    <!-- Discount Showcase Section -->
+    @await Component.InvokeAsync("DiscountMenu")
+    <!-- Featured Products -->
+
+    <section class="pt-8 pb-16 max-w-[1920px] mx-auto">
+        <div class="px-4 md:px-8 mb-10 md:mb-16 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div>
+                <h2 class="text-2xl md:text-4xl font-light tracking-tight text-slate-900 uppercase">
+                    Popular Products
+                </h2>
+                <p class="text-slate-500 text-xs md:text-sm mt-2 max-w-xs font-light leading-relaxed">
+                    Each piece in our collection is hand-selected for its material integrity and timeless design.
+                </p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-1 gap-y-10 md:gap-y-16">
+            @foreach (var product in Model)
+            {
+                var firstImage = product.Images?.OrderBy(i => i.DisplayOrder).FirstOrDefault();
+                var imageUrl = firstImage != null ? $"/images/products/{firstImage.ImageUrl}" : "/images/placeholder.jpg";
+                var hasDiscount = product.DiscountPrice.HasValue && product.DiscountPrice < product.Price;
+                var discountPercent = hasDiscount
+                ? (int)Math.Round((1 - (product.DiscountPrice!.Value / product.Price)) * 100)
+                : 0;
+
+                <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.Id"
+                   class="group block">
+
+                    <div class="relative overflow-hidden bg-slate-50 aspect-[3/4]">
+                        <img class="w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-90"
+                             src="@imageUrl"
+                             alt="@product.Name"
+                             loading="lazy" />
+
+                        <button type="button"
+                                onclick="event.preventDefault(); event.stopPropagation();"
+                                class="absolute bottom-3 right-3 w-8 h-8 md:w-9 md:h-9 flex items-center justify-center text-slate-700 hover:text-slate-900 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 md:w-[22px] md:h-[22px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="px-2 md:px-3 pt-3 md:pt-4">
+                        <h3 class="text-xs md:text-sm text-slate-900 font-normal leading-snug line-clamp-2 min-h-[2.5rem]">
+                            @product.Name
+                        </h3>
+
+                        <div class="mt-2 flex items-center gap-2 flex-wrap">
+                            @if (hasDiscount)
+                            {
+                                <span class="text-xs md:text-sm text-slate-400 line-through">
+                                    @product.Price.ToString("N2") TL
+                                </span>
+                                <span class="text-xs md:text-sm text-red-600 font-medium">
+                                    @product.DiscountPrice!.Value.ToString("N2") TL
+                                </span>
+                                <span class="text-xs md:text-sm text-red-600 font-medium">
+                                    −@discountPercent%
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="text-xs md:text-sm text-slate-900 font-normal">
+                                    @product.Price.ToString("N2") TL
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    </section>
+
+
+    <!-- Pre-Footer / Contact -->
+    <section class="bg-surface-container-low pt-14 pb-10 px-8 md:px-12 overflow-hidden">
+        <div class="max-w-[1440px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+            <div class="space-y-5">
+                <h2 class="text-2xl md:text-3xl font-extrabold tracking-tight leading-tight">
+                    Concierge Service<br />
+                    <span class="text-primary">Contact us anytime</span>
+                </h2>
+                <p class="text-sm text-on-surface-variant font-body leading-relaxed max-w-md">
+                    Our atelier specialists are available around the clock to assist
+                    with styling, shipping queries, or private viewing appointments.
+                </p>
+                <div class="flex flex-wrap gap-3">
+                    <a class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest text-primary transition-all hover:bg-primary hover:text-on-primary"
+                       href="#">
+                        <span class="material-symbols-outlined text-[20px]" data-icon="mail">mail</span>
+                    </a>
+                    <a class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest text-primary transition-all hover:bg-primary hover:text-on-primary"
+                       href="#">
+                        <span class="material-symbols-outlined text-[20px]" data-icon="phone_iphone">phone_iphone</span>
+                    </a>
+                    <a class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest text-primary transition-all hover:bg-primary hover:text-on-primary"
+                       href="#">
+                        <span class="material-symbols-outlined text-[20px]" data-icon="public">public</span>
+                    </a>
+                </div>
+            </div>
+            <div class="relative">
+                <!-- High Impact WhatsApp Button -->
+                <div class="relative z-10 p-1 bg-white rounded-[28px] shadow-xl">
+                    <button class="w-full flex items-center justify-between px-5 py-4 bg-[#25D366] rounded-[24px] text-white transition-all hover:scale-[1.01] active:scale-[0.99] group">
+                        <div class="flex items-center gap-4 text-left">
+                            <div class="w-11 h-11 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                <span class="material-symbols-outlined text-[22px]"
+                                      data-icon="chat"
+                                      data-weight="fill"
+                                      style="font-variation-settings: &quot;FILL&quot; 1">chat</span>
+                            </div>
+                            <div>
+                                <span class="block text-[10px] font-bold uppercase tracking-widest opacity-80 mb-0.5">Instant Support</span>
+                                <span class="block text-base md:text-lg font-extrabold tracking-tight">Chat on WhatsApp</span>
+                            </div>
+                        </div>
+                        <span class="material-symbols-outlined text-[22px] hidden sm:block opacity-40 group-hover:opacity-100 transition-opacity"
+                              data-icon="open_in_new">open_in_new</span>
+                    </button>
+                </div>
+                <!-- Decorative Element -->
+                <div class="absolute -top-8 -right-8 w-32 h-32 bg-primary-container/10 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-8 -left-8 w-40 h-40 bg-secondary-container/20 rounded-full blur-3xl"></div>
+            </div>
+        </div>
+    </section>
+</main>
+

@@ -1,0 +1,37 @@
+
+@{
+    ViewData["Title"] = "Update";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+@model UpdateCategoryDto
+
+
+
+<div class="container-fluid px-4 mt-4">
+
+    <h2>Update Category</h2>
+
+    <form asp-area="Admin"
+          asp-controller="Category"
+          asp-action="Update"
+          method="post">
+
+        <div class="card p-4">
+
+            <input asp-for="Id" type="hidden" />
+
+            <div class="mb-3">
+                <label>Name</label>
+                <input asp-for="Name" class="form-control" required />
+            </div>
+
+            <div class="mb-3">
+                <label>Display Order</label>
+                <input asp-for="DisplayOrder" type="number" class="form-control" required />
+            </div>
+
+            <button type="submit" class="btn btn-warning">Update</button>
+
+        </div>
+    </form>
+</div>

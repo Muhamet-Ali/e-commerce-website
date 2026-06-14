@@ -1,0 +1,228 @@
+﻿<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>The Editorial Atelier | Curated Excellence</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Manrope:wght@400;500;600;700;800&amp;display=swap"
+          rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+          rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+          rel="stylesheet" />
+    <link rel="stylesheet" href="https://ka-f.webawesome.com/@@latest/styles/themes/default.css">
+    <link rel="stylesheet" href="https://ka-f.webawesome.com/@@latest/styles/native.css">
+    <script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              colors: {
+                "surface-container-high": "#e4e9ec",
+                "secondary-container": "#e1e0f9",
+                "primary-fixed": "#7380f9",
+                outline: "#767b7f",
+                tertiary: "#73547a",
+                "on-primary-fixed-variant": "#000554",
+                "on-secondary": "#fbf7ff",
+                "on-secondary-container": "#505064",
+                "on-primary": "#fbf8ff",
+                "primary-fixed-dim": "#6673eb",
+                "surface-container-lowest": "#ffffff",
+                "on-error": "#fff7f7",
+                "surface-variant": "#dee3e7",
+                "on-tertiary-fixed-variant": "#6c4d72",
+                "primary-dim": "#3845bc",
+                "on-secondary-fixed-variant": "#595a6f",
+                "on-tertiary": "#fff7fb",
+                "secondary-dim": "#515166",
+                "tertiary-fixed": "#f7d0fd",
+                "tertiary-dim": "#67486d",
+                background: "#f8f9fb",
+                "on-background": "#2d3337",
+                primary: "#4552c8",
+                "inverse-primary": "#7885fe",
+                error: "#a8364b",
+                "error-dim": "#6b0221",
+                "secondary-fixed": "#e1e0f9",
+                "inverse-on-surface": "#9b9d9f",
+                "on-secondary-fixed": "#3d3e51",
+                surface: "#f8f9fb",
+                "tertiary-container": "#f7d0fd",
+                "tertiary-fixed-dim": "#e9c2ee",
+                "surface-container": "#ebeef1",
+                "secondary-fixed-dim": "#d3d2eb",
+                "inverse-surface": "#0c0f10",
+                "error-container": "#f97386",
+                "surface-dim": "#d5dbdf",
+                "surface-container-highest": "#dee3e7",
+                "on-surface": "#2d3337",
+                "on-tertiary-container": "#614468",
+                "on-primary-container": "#00011f",
+                "primary-container": "#7380f9",
+                "on-error-container": "#6e0523",
+                "outline-variant": "#adb3b7",
+                "surface-tint": "#4552c8",
+                "on-surface-variant": "#5a6064",
+                "on-tertiary-fixed": "#4e3154",
+                "on-primary-fixed": "#000000",
+                "surface-bright": "#f8f9fb",
+                "surface-container-low": "#f1f4f7",
+                secondary: "#5d5d72",
+              },
+              borderRadius: {
+                DEFAULT: "0.25rem",
+                lg: "0.5rem",
+                xl: "0.75rem",
+                full: "9999px",
+              },
+              fontFamily: {
+                headline: ["Manrope"],
+                body: ["Inter"],
+                label: ["Inter"],
+              },
+            },
+          },
+        };
+    </script>
+    
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+            vertical-align: middle;
+        }
+
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #f8f9fb;
+        }
+
+        h1,
+        h2,
+        h3,
+        .font-manrope {
+            font-family: "Manrope", sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- HEADER Basi -->
+    @await Component.InvokeAsync("CategoryMenu")  
+    <!-- HEADER son -->
+          
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <!-- Footer (Shared Component) -->
+    <footer class="w-full bg-[#f1f4f7] dark:bg-slate-950">
+        <div class="border-t border-slate-200/70 dark:border-slate-800">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 px-8 md:px-12 pt-10 pb-8 w-full max-w-[1440px] mx-auto">
+                <!-- Brand Column -->
+                <div class="col-span-2 md:col-span-1 space-y-3">
+                    <span class="text-base font-manrope font-bold text-slate-900 dark:text-slate-50">The Editorial Atelier</span>
+                    <p class="text-[11px] font-inter text-slate-500 leading-relaxed uppercase tracking-wider">
+                        Curating luxury and sustainability for the modern aesthetic.
+                    </p>
+                </div>
+                <!-- Links Column 1 -->
+                <div class="space-y-3">
+                    <h4 class="font-inter text-[11px] tracking-wide uppercase font-semibold text-slate-900 dark:text-slate-100">
+                        Company
+                    </h4>
+                    <ul class="space-y-2">
+                        <li>
+                            <a class="font-inter text-[11px] tracking-wide uppercase font-semibold text-slate-400 hover:text-slate-900 transition-all hover:underline decoration-[#7C83FD] decoration-2 underline-offset-4"
+                               href="#">Sustainability</a>
+                        </li>
+                        <li>
+                            <a class="font-inter text-[11px] tracking-wide uppercase font-semibold text-slate-400 hover:text-slate-900 transition-all hover:underline decoration-[#7C83FD] decoration-2 underline-offset-4"
+                               href="#">Stockists</a>
+                        </li>
+                        <li>
+                            <a class="font-inter text-[11px] tracking-wide uppercase font-semibold text-slate-400 hover:text-slate-900 transition-all hover:underline decoration-[#7C83FD] decoration-2 underline-offset-4"
+                               href="#">Contact</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Links Column 2 -->
+                <div class="space-y-3">
+                    <h4 class="font-inter text-[11px] tracking-wide uppercase font-semibold text-slate-900 dark:text-slate-100">
+                        Customer Care
+                    </h4>
+                    <ul class="space-y-2">
+                        <li>
+                            <a class="font-inter text-[11px] tracking-wide uppercase font-semibold text-slate-400 hover:text-slate-900 transition-all hover:underline decoration-[#7C83FD] decoration-2 underline-offset-4"
+                               href="#">Shipping &amp; Returns</a>
+                        </li>
+                        <li>
+                            <a class="font-inter text-[11px] tracking-wide uppercase font-semibold text-slate-400 hover:text-slate-900 transition-all hover:underline decoration-[#7C83FD] decoration-2 underline-offset-4"
+                               href="#">Privacy Policy</a>
+                        </li>
+                        <li>
+                            <a class="font-inter text-[11px] tracking-wide uppercase font-semibold text-slate-400 hover:text-slate-900 transition-all hover:underline decoration-[#7C83FD] decoration-2 underline-offset-4"
+                               href="#">Terms of Service</a>
+                        </li>
+                    </ul>
+                </div>
+                <!-- Newsletter -->
+                <div class="col-span-2 md:col-span-1 space-y-3">
+                    <h4 class="font-inter text-[11px] tracking-wide uppercase font-semibold text-slate-900 dark:text-slate-100">
+                        Journal Subscription
+                    </h4>
+                    <div class="flex gap-2">
+                        <input class="w-full bg-surface-container-lowest border-none rounded-full px-4 py-2 text-xs font-inter focus:ring-2 focus:ring-[#7C83FD]"
+                               placeholder="Email Address"
+                               type="email" />
+                        <button class="bg-[#7C83FD] text-white px-3 py-2 rounded-full hover:opacity-90 transition-opacity flex-shrink-0">
+                            <span class="material-symbols-outlined text-[16px]"
+                                  data-icon="send">send</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-slate-200/70 dark:border-slate-800">
+                <div class="px-8 md:px-12 py-4 w-full max-w-[1440px] mx-auto text-center md:text-left">
+                    <p class="font-inter text-[10px] tracking-wide uppercase font-semibold text-slate-400">
+                        © 2024 The Editorial Atelier. Crafted for the curation-minded.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    <script type="module" src="https://ka-f.webawesome.com/@@latest/webawesome.loader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <script>
+            Swal.fire({
+                title: 'Success!',
+                text: '@TempData["SuccessMessage"]',
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <script>
+            Swal.fire({
+                title: 'Error',
+                text: '@TempData["ErrorMessage"]',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+        </script>
+    }
+</body>
+</html>

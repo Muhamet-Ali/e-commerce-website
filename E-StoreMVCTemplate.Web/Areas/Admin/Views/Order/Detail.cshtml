@@ -1,0 +1,145 @@
+@using E_StoreMVCTemplate.Domain.Enums
+
+@{
+    ViewData["Title"] = "Order Detail";
+    Layout = "~/Areas/Admin/Views/Shared/_AdminLayout.cshtml";
+}
+
+@model OrderDetailDto
+
+
+<div class="container-fluid px-4 mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Order #@Model.Id</h1>
+        <div>
+            @if (Model.Status == OrderStatus.Pending)
+            {
+                <a asp-area="Admin"
+                   asp-controller="Order"
+                   asp-action="Confirm"
+                   asp-route-id="@Model.Id"
+                   class="btn btn-success"
+                   onclick="return confirm('Confirm this order?')">
+                    Confirm Order
+                </a>
+            }
+            <a asp-area="Admin"
+               asp-controller="Order"
+               asp-action="Index"
+               class="btn btn-secondary">
+                Back to List
+            </a>
+        </div>
+    </div>
+
+    <!-- Order Info -->
+    <div class="card mb-4">
+        <div class="card-header">Order Info</div>
+        <div class="card-body">
+            <table class="table table-bordered mb-0">
+                <tr>
+                    <th style="width: 200px;">Status</th>
+                    <td>
+                        @if (Model.Status == OrderStatus.Pending)
+                        {
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success">Confirmed</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <th>TotalAmount</th>
+                    <td>@Model.TotalAmount</td>
+                </tr>
+                <tr>
+                    <th>Address</th>
+                    <td>@Model.Address</td>
+                </tr>
+                <tr>
+                    <th>CreatedAt</th>
+                    <td>@Model.CreatedAt.ToString("g")</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- User Info -->
+    <div class="card mb-4">
+        <div class="card-header">User Info</div>
+        <div class="card-body">
+            <table class="table table-bordered mb-0">
+                <tr>
+                    <th style="width: 200px;">UserName</th>
+                    <td>
+                        <a asp-area="Admin"
+                           asp-controller="User"
+                           asp-action="Detail"
+                           asp-route-id="@Model.UserId">
+                            @Model.UserName
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>@Model.UserEmail</td>
+                </tr>
+                <tr>
+                    <th>PhoneNumber</th>
+                    <td>@Model.UserPhoneNumber</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <!-- Items -->
+    <div class="card mb-4">
+        <div class="card-header">Order Items</div>
+        <div class="card-body">
+
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>UnitPrice</th>
+                        <th>SubTotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items != null && Model.Items.Any())
+                    {
+                        foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>@item.ProductName</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.UnitPrice</td>
+                                <td>@item.SubTotal</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">
+                                No items
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="3" class="text-end">Grand Total</th>
+                        <th>@Model.TotalAmount</th>
+                    </tr>
+                </tfoot>
+            </table>
+
+        </div>
+    </div>
+
+</div>

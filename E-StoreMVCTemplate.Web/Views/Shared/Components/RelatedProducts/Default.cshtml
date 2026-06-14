@@ -1,0 +1,45 @@
+﻿@model List<GetRelatedProductDto>
+
+<div class="mt-32">
+    <div class="flex items-end justify-between mb-12">
+        <div class="space-y-2">
+            <p class="text-primary font-bold uppercase tracking-widest text-[10px]">
+                Complete the look
+            </p>
+            <h3 class="text-4xl font-headline font-bold tracking-tight">
+                Curated Essentials
+            </h3>
+        </div>
+        <a class="text-sm font-bold text-on-surface-variant hover:text-primary transition-colors flex items-center gap-2 pb-1 border-b-2 border-transparent hover:border-primary"
+           asp-controller="Product" asp-action="Index">
+            View Collection
+            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+        </a>
+    </div>
+
+    <div class="flex flex-wrap gap-6 md:gap-8">
+        @foreach (var product in Model)
+        {
+            <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.Id"
+               class="group cursor-pointer block w-full sm:w-[calc(50%-1rem)] lg:w-[calc(25%-1.5rem)]">
+
+                <div class="relative aspect-[3/4] rounded-3xl overflow-hidden bg-surface-container-low mb-4">
+                    <img class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                         src="@(product.Images != null && product.Images.Any()
+                                                     ? Url.Content("~/images/products/" + product.Images.First().ImageUrl)
+                                                     : Url.Content("~/images/no-image.jpg"))"
+                     alt="@product.Name" />
+
+                    <div class="absolute inset-0 bg-on-background/0 group-hover:bg-on-background/10 transition-all duration-500 flex items-center justify-center opacity-0 group-hover:opacity-100 backdrop-blur-[2px]">
+                        <button class="bg-surface-container-lowest text-on-surface px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest shadow-xl transform translate-y-4 group-hover:translate-y-0 transition-all duration-500">
+                            Quick View
+                        </button>
+                    </div>
+                </div>
+
+                <h4 class="font-bold text-on-surface mb-1">@product.Name</h4>
+                <p class="text-on-surface-variant text-sm">$@product.Price.ToString("0.00")</p>
+            </a>
+                }
+    </div>
+</div>
